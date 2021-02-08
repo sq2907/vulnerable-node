@@ -1,0 +1,52 @@
+# Node.js
+# Build a general Node.js project with npm.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install
+    npm run build
+  displayName: 'npm install and build'
+
+- script: |
+   wget https://github.com/github/codeql-action/releases/latest/download/codeql-runner-linux
+   chmod +x codeql-runner-linux
+   
+  displayName: 'Get latest CodeQL package. Install on Agent.'
+
+- script: |
+   ./codeql-runner-linux init \
+   --repository sq2907/vulnerable-node \
+   --github-url https://github.com \
+   --github-auth $(GitHub Token) \
+  displayName: 'Initialize CodeQL Executable and create a CodeQL database' 
+
+- script: |
+    chmod +x ./codeql-runner/codeql-env.sh
+    ./codeql-runner/codeql-env.sh \
+    --repository sq2907/vulnerable-node \
+    --github-url https://github.com \
+    --github-auth $(GitHub Token) \
+  displayName: 'Run the Script' 
+
+- script: |
+   ./codeql-runner-linux analyze \
+   --repository sq2907/vulnerable-node \
+   --github-url https://github.com \
+   --github-auth $(GitHub Token) \
+   --commit $(Build.SourceVersion) \
+   --ref $(Build.SourceBranch)
+  displayName: 'Populate the CodeQL runner databases, analyze them, and upload the results to GitHub.'
+
