@@ -33,14 +33,6 @@ steps:
   displayName: 'Initialize CodeQL Executable and create a CodeQL database' 
 
 - script: |
-    chmod +x ./codeql-runner/codeql-env.sh
-    ./codeql-runner/codeql-env.sh \
-    --repository sq2907/vulnerable-node \
-    --github-url https://github.com \
-    --github-auth $(GitHub Token) \
-  displayName: 'Run the Script' 
-
-- script: |
    ./codeql-runner-linux analyze \
    --repository sq2907/vulnerable-node \
    --github-url https://github.com \
