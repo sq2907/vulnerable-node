@@ -19,10 +19,6 @@ steps:
   inputs:
     command: 'install'
 
-- task: Npm@1
-  inputs:
-    command: 'publish'
-
 - script: |
    wget https://github.com/github/codeql-action/releases/latest/download/codeql-runner-linux
    chmod +x codeql-runner-linux
