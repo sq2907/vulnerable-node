@@ -41,3 +41,21 @@ steps:
    --ref $(Build.SourceBranch)
   displayName: 'Populate the CodeQL runner databases, analyze them, and upload the results to GitHub.'
 
+jobs:
+- job: Job_1
+  displayName: Agent job 1
+  steps:
+  - checkout: self
+    clean: False
+  - task: SonarQubePrepare@4
+    displayName: Prepare analysis on SonarQube
+    inputs:
+      SonarQube: 27b9ac7e-ef90-4857-8996-25be173a1da0
+      projectKey: webgoat_sonarqube
+      projectName: webgoat_sonarqube
+  - task: MSBuild@1
+    displayName: Build solution **/*.sln
+  - task: SonarQubeAnalyze@4
+    displayName: Run Code Analysis
+  - task: SonarQubePublish@4
+    displayName: Publish Quality Gate Result
